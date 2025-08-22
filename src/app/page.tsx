@@ -109,7 +109,7 @@ export default function Home() {
             </a>
             .
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center mt-6 max-w-4xl mx-auto space-y-6 sm:space-y-0 sm:space-x-6 md:space-x-10 lg:space-x-16">
+          <div className="flex flex-col sm:flex-row items-center md:items-start justify-center mt-6 max-w-4xl mx-auto space-y-6 sm:space-y-0 sm:space-x-6 md:space-x-10 lg:space-x-16">
             {[
               {
                 label: "S",
@@ -128,9 +128,9 @@ export default function Home() {
                   {/* Lid line */}
                   <div className="absolute top-1 left-0 right-0 h-[2px] bg-gray-300 rounded"></div>
                   {/* Handle/stripe */}
-                  <div className="absolute left-1/2 transform -translate-x-1/2 bottom-2 sm:bottom-4 w-6 sm:w-8 h-2 bg-gray-300 rounded"></div>
+                  <div className="absolute left-1/2 transform -translate-x-1/2 top-2 md:top-4 w-6 sm:w-8 h-1.5 md:h-2 bg-gray-300 rounded"></div>
                   {/* Size label */}
-                  <span className="font-bold text-sm sm:text-base text-[#06398A] z-10">
+                  <span className="font-bold absolute bottom-2 md:bottom-5 text-sm sm:text-base text-[#06398A] z-10">
                     {unit.label}
                   </span>
                 </div>
