@@ -17,10 +17,14 @@ export default function AvailableUnits() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/units/")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/units/`)
       .then((res) => res.json())
       .then((data) => {
-        setUnits(data);
+        const order = ["S", "M", "L", "XL"];
+        const sorted = data.sort(
+          (a: Unit, b: Unit) => order.indexOf(a.size) - order.indexOf(b.size)
+        );
+        setUnits(sorted);
         setLoading(false);
       })
       .catch((err) => {
@@ -38,7 +42,8 @@ export default function AvailableUnits() {
         </h1>
 
         <p className="text-center mb-12 text-gray-600">
-          Here’s a live snapshot of what’s available. Contact us to reserve a unit today!
+          Here’s a live snapshot of what’s available. Contact us to reserve a
+          unit today!
         </p>
 
         {loading ? (
@@ -49,16 +54,16 @@ export default function AvailableUnits() {
               {units.map((unit) => (
                 <div
                   key={unit.id}
-                  className="border rounded-lg p-6 shadow hover:shadow-lg transition"
+                  className="border relative rounded-lg p-6 shadow hover:shadow-lg transition"
                 >
-                  <h2 className="text-2xl font-bold text-[#06398A] mb-2">
+                  <h2 className="text-2xl font-bold text-[#06398A] mb-4">
                     {unit.size}
                   </h2>
-                  <p className="text-sm text-gray-500 mb-1">
+                  <p className="text-sm text-gray-500 mb-2">
                     Dimensions: {unit.dimensions}
                   </p>
-                  <p className="text-sm mb-3">{unit.description}</p>
-                  <p className="text-lg font-semibold">
+                  <p className="text-sm mb-8">{unit.description}</p>
+                  <p className="text-lg font-semibold absolute bottom-4">
                     {unit.available_units} available
                   </p>
                 </div>

@@ -39,14 +39,14 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Right Links */}
-        <div className="hidden md:flex gap-6">
+        {/* <div className="hidden md:flex gap-6">
           <Link href="#signup" className="text-[#06398A] hover:underline">
             Sign up
           </Link>
           <Link href="#login" className="text-[#06398A] hover:underline">
             Login
           </Link>
-        </div>
+        </div> */}
 
         <div className="md:hidden">
           <button
@@ -89,7 +89,7 @@ export default function Navbar() {
           >
             Available Units
           </Link>
-          <Link
+          {/* <Link
             href="#signup"
             className="text-[#06398A] hover:underline"
             onClick={() => setIsOpen(false)}
@@ -102,7 +102,7 @@ export default function Navbar() {
             onClick={() => setIsOpen(false)}
           >
             Login
-          </Link>
+          </Link> */}
         </div>
       )}
     </nav>

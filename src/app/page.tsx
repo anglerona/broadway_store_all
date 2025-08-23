@@ -166,7 +166,7 @@ export default function Home() {
               <h3 className="text-2xl font-semibold mb-4">Contact</h3>
               <p className="mb-2 flex items-center gap-2 font-medium">
                 <HiOutlinePhone className="text-[#06398A] w-6 h-6" />{" "}
-                604-731-6689
+                778-775-2026
               </p>
               <p className="mb-2 flex items-start gap-2">
                 <HiOutlineLocationMarker className="text-[#06398A] w-6 h-6" />{" "}
