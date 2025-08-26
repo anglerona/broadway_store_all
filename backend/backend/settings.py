@@ -24,7 +24,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "http://localhost:3000",
+    "https://broadwaystoreall.ca",
+    "https://broadway-store-all.onrender.com"
+]
 
 
 # Application definition
@@ -57,6 +61,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://broadwaystoreall.ca",
+    "https://broadway-store-all.onrender.com"
 ]
 
 ROOT_URLCONF = 'backend.urls'
