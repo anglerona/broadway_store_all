@@ -25,9 +25,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "http://localhost:3000",
-    "https://broadwaystoreall.ca",
-    "https://broadway-store-all.onrender.com"
+    "localhost:3000",
+    "broadwaystoreall.ca",
+    "broadway-store-all.onrender.com"
 ]
 
 
