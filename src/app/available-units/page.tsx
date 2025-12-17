@@ -10,6 +10,7 @@ type Unit = {
   dimensions: string;
   description: string;
   available_units: number;
+  price_range: string;
 };
 
 export default function AvailableUnits() {
@@ -54,18 +55,26 @@ export default function AvailableUnits() {
               {units.map((unit) => (
                 <div
                   key={unit.id}
-                  className="border relative rounded-lg p-6 shadow hover:shadow-lg transition"
+                  className="border rounded-lg p-6 shadow hover:shadow-lg transition flex flex-col h-full"
                 >
                   <h2 className="text-2xl font-bold text-[#06398A] mb-4">
                     {unit.size}
                   </h2>
+
                   <p className="text-sm text-gray-500 mb-2">
                     Dimensions: {unit.dimensions}
                   </p>
-                  <p className="text-sm mb-8">{unit.description}</p>
-                  <p className="text-lg font-semibold absolute bottom-4">
-                    {unit.available_units} available
-                  </p>
+
+                  <p className="text-sm mb-6">{unit.description}</p>
+
+                  <div className="mt-auto">
+                    <p className="text-lg font-semibold">
+                      {unit.available_units} available
+                    </p>
+                    <p className="text-sm">
+                      Prices starting from {unit.price_range}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
