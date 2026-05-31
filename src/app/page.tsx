@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Image from "next/image";
 import FeatureItem from "../components/FeatureItem";
@@ -14,15 +17,93 @@ import {
   HiOutlineX,
 } from "react-icons/hi";
 
+type HomepageContent = {
+  features_title: string;
+  features_description: string;
+  unit_sizes_title: string;
+  unit_sizes_text_1: string;
+  unit_sizes_text_2: string;
+  contact_title: string;
+  phone_number: string;
+  address: string;
+  hours_description: string;
+  weekday_hours: string;
+  closed_hours: string;
+  google_maps_embed_url: string;
+};
+
+type Feature = {
+  id: number;
+  title: string;
+  icon: "sun" | "shield" | "fire" | "home" | "location" | "sparkles";
+  display_order: number;
+};
+
+type Unit = {
+  id: number;
+  size: string;
+  dimensions: string;
+  description: string;
+  available_units: number;
+  price_range: string;
+};
+
+const iconMap = {
+  sun: HiOutlineSun,
+  shield: HiOutlineShieldCheck,
+  fire: HiOutlineFire,
+  home: HiOutlineHome,
+  location: HiOutlineLocationMarker,
+  sparkles: HiOutlineSparkles,
+};
+
+const sizeLabels: Record<string, string> = {
+  S: "Small unit",
+  M: "Medium unit",
+  L: "Large unit",
+  XL: "X-Large unit",
+};
+
 export default function Home() {
-  const features = [
-    { icon: HiOutlineSun, title: "Dry" },
-    { icon: HiOutlineShieldCheck, title: "Secure" },
-    { icon: HiOutlineFire, title: "Heated units" },
-    { icon: HiOutlineHome, title: "Neighborhood facility" },
-    { icon: HiOutlineLocationMarker, title: "Close to VGH" },
-    { icon: HiOutlineSparkles, title: "Clean" },
+  const [content, setContent] = useState<HomepageContent | null>(null);
+  const [features, setFeatures] = useState<Feature[]>([]);
+  const [units, setUnits] = useState<Unit[]>([]);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
+    null,
+  );
+
+  const galleryImages = [
+    { src: "/outside.jpg", alt: "Outside view" },
+    { src: "/hall.jpg", alt: "Hall view 1" },
+    { src: "/hall2.jpg", alt: "Hall view 2" },
   ];
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/homepage-content/`)
+      .then((res) => res.json())
+      .then((data) => setContent(Array.isArray(data) ? data[0] : data))
+      .catch((err) => console.error("Failed to fetch homepage content:", err));
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/features/`)
+      .then((res) => res.json())
+      .then((data) => setFeatures(data))
+      .catch((err) => console.error("Failed to fetch features:", err));
+
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/units/`)
+      .then((res) => res.json())
+      .then((data) => {
+        const order = ["S", "M", "L", "XL"];
+        const sorted = data.sort(
+          (a: Unit, b: Unit) => order.indexOf(a.size) - order.indexOf(b.size),
+        );
+        setUnits(sorted);
+      })
+      .catch((err) => console.error("Failed to fetch units:", err));
+  }, []);
+
+  if (!content) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen">
@@ -44,63 +125,78 @@ export default function Home() {
         </main>
       </div>
 
-      {/* Facility Features Section */}
       <section id="features" className="py-20 px-8 sm:px-20 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-bold text-[#06398A] mb-6">
-            Facility Features
+            {content.features_title}
           </h2>
           <p className="text-gray-700 text-base sm:text-lg leading-relaxed">
-            Broadway Store-All provides a selection of storage units for you to
-            choose from. We are conveniently located in a neighborhood facility
-            located in Fairview Slopes. Whether you need storage for your home
-            or business, we have the space for you.
+            {content.features_description}
           </p>
         </div>
 
-        {/* Features Grid */}
         <div className="max-w-4xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-4 justify-center mb-12">
-          {features.map((feature) => (
-            <FeatureItem
-              key={feature.title}
-              icon={feature.icon}
-              title={feature.title}
-            />
-          ))}
+          {features.map((feature) => {
+            const Icon = iconMap[feature.icon] || HiOutlineSparkles;
+
+            return (
+              <FeatureItem key={feature.id} icon={Icon} title={feature.title} />
+            );
+          })}
         </div>
 
-        {/* Images Row */}
         <div className="max-w-6xl mx-auto flex flex-col md:flex-col lg:flex-row gap-4">
-          <Image
-            src="/outside.jpg"
-            alt="Outside view"
-            width={1200}
-            height={600}
-            className="flex-2 h-80 rounded-lg object-fit"
-          />
-          <Image
-            src="/hall.jpg"
-            alt="Hall view 1"
-            width={600}
-            height={400}
-            className="flex-1 h-80 rounded-lg object-fit"
-          />
-          <Image
-            src="/hall2.jpg"
-            alt="Hall view 2"
-            width={600}
-            height={400}
-            className="flex-1 h-80 rounded-lg object-fit"
-          />
+          <button
+            onClick={() => setSelectedImageIndex(0)}
+            className="flex-2 h-80 rounded-lg overflow-hidden"
+          >
+            <Image
+              src="/outside.jpg"
+              alt="Outside view"
+              width={1200}
+              height={600}
+              className="w-full h-full object-cover hover:scale-105 transition duration-300"
+            />
+          </button>
+
+          <button
+            onClick={() => setSelectedImageIndex(1)}
+            className="flex-1 h-80 rounded-lg overflow-hidden"
+          >
+            <Image
+              src="/hall.jpg"
+              alt="Hall view 1"
+              width={600}
+              height={400}
+              className="w-full h-full object-cover hover:scale-105 transition duration-300"
+            />
+          </button>
+
+          <button
+            onClick={() => setSelectedImageIndex(2)}
+            className="flex-1 h-80 rounded-lg overflow-hidden"
+          >
+            <Image
+              src="/hall2.jpg"
+              alt="Hall view 2"
+              width={600}
+              height={400}
+              className="w-full h-full object-cover hover:scale-105 transition duration-300"
+            />
+          </button>
         </div>
       </section>
 
       <section id="unit-size" className="bg-[#06398A] text-white py-16">
         <div className="max-w-6xl mx-auto px-8 text-center">
-          <h2 className="text-3xl font-bold mb-4">Unit Sizes</h2>
+          <h2 className="text-3xl font-bold mb-4">
+            {content.unit_sizes_title}
+          </h2>
+
           <p className="mb-12 text-lg">
-            Prices range from $60-$350 / month + GST. <br />
-            Not sure what size is best? Our storage experts are here to help!{" "}
+            {content.unit_sizes_text_1}
+            <br />
+            {content.unit_sizes_text_2}{" "}
             <a
               href="#contact"
               className="underline font-semibold hover:text-gray-300 transition-colors"
@@ -109,41 +205,26 @@ export default function Home() {
             </a>
             .
           </p>
+
           <div className="flex flex-col sm:flex-row items-center md:items-start justify-center mt-6 max-w-4xl mx-auto space-y-6 sm:space-y-0 sm:space-x-6 md:space-x-10 lg:space-x-16">
-            {[
-              {
-                label: "S",
-                desc: ["Small unit", "5 x 5 x 5", "various sizes available"],
-              },
-              {
-                label: "M",
-                desc: ["Medium unit", "5 x 5 x 8", "various sizes available"],
-              },
-              { label: "L", desc: ["Large unit", "7 x 7 x 8 & 5 x 10 x 8"] },
-              { label: "XL", desc: ["X-Large unit", "8 x 16 x 8"] },
-            ].map((unit, index) => (
-              <div key={index} className="flex flex-col items-center">
-                {/* Storage box */}
+            {units.map((unit) => (
+              <div key={unit.id} className="flex flex-col items-center">
                 <div className="w-12 h-12 sm:w-20 sm:h-20 bg-white text-[#06398A] rounded-md relative shadow-md flex items-center justify-center">
-                  {/* Lid line */}
                   <div className="absolute top-1 left-0 right-0 h-[2px] bg-gray-300 rounded"></div>
-                  {/* Handle/stripe */}
                   <div className="absolute left-1/2 transform -translate-x-1/2 top-2 md:top-4 w-6 sm:w-8 h-1.5 md:h-2 bg-gray-300 rounded"></div>
-                  {/* Size label */}
                   <span className="font-bold absolute bottom-2 md:bottom-5 text-sm sm:text-base text-[#06398A] z-10">
-                    {unit.label}
+                    {unit.size}
                   </span>
                 </div>
 
                 <div className="mt-2 sm:mt-3 text-sm sm:text-base text-white text-center space-y-1">
-                  {unit.desc.map((line, i) => (
-                    <p
-                      key={i}
-                      className={i === 2 ? "italic text-white/80" : ""}
-                    >
-                      {line}
-                    </p>
+                  <p>{sizeLabels[unit.size] || unit.size}</p>
+
+                  {unit.dimensions.split("&").map((line, i) => (
+                    <p key={i}>{line.trim()}</p>
                   ))}
+
+                  <p className="italic text-white/80">various sizes</p>
                 </div>
               </div>
             ))}
@@ -157,44 +238,43 @@ export default function Home() {
       >
         <div className="max-w-6xl mx-auto text-center sm:text-left">
           <h2 className="text-3xl font-bold mb-8 text-[#06398A]">
-            Contact & Hours
+            {content.contact_title}
           </h2>
 
           <div className="flex flex-col md:flex-row justify-between gap-12">
-            {/* Contact Info */}
             <div className="flex-1">
               <h3 className="text-2xl font-semibold mb-4">Contact</h3>
               <p className="mb-2 flex items-center gap-2 font-medium">
                 <HiOutlinePhone className="text-[#06398A] w-6 h-6" />{" "}
-                778-775-2026
+                {content.phone_number}
               </p>
               <p className="mb-2 flex items-start gap-2">
                 <HiOutlineLocationMarker className="text-[#06398A] w-6 h-6" />{" "}
-                2425 Laurel Street, Vancouver, BC V5Z 4M3, Canada
+                {content.address}
               </p>
             </div>
 
-            {/* Hours Info */}
             <div className="flex-1">
               <h3 className="text-2xl font-semibold mb-4">Hours</h3>
               <p className="mb-2 flex items-center gap-2">
-                <HiOutlineClock className="text-[#06398A] w-6 h-6" /> Accessible
-                during hours of operation
+                <HiOutlineClock className="text-[#06398A] w-6 h-6" />{" "}
+                {content.hours_description}
               </p>
               <p className="mb-2 flex items-center gap-2">
                 <HiOutlineCalendar className="text-[#06398A] w-6 h-6" />{" "}
-                Tuesday-Saturday: 10am - 6pm
+                {content.weekday_hours}
               </p>
               <p className="flex items-center gap-2">
-                <HiOutlineX className="text-[#06398A] w-6 h-6" /> Closed
-                Sunday-Monday
+                <HiOutlineX className="text-[#06398A] w-6 h-6" />{" "}
+                {content.closed_hours}
               </p>
             </div>
           </div>
+
           <div className="mt-12 w-full h-80 sm:h-96 rounded-lg overflow-hidden">
             <iframe
               title="Google Maps - 2425 Laurel Street"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2604.8854894857686!2d-123.08452968433845!3d49.27185797933135!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x54867392e1b9aa13%3A0xa1b3c24f5e8f5f5f!2s2425%20Laurel%20St%2C%20Vancouver%2C%20BC%20V5Z%204M3%2C%20Canada!5e0!3m2!1sen!2sus!4v1692295567890!5m2!1sen!2sus"
+              src={content.google_maps_embed_url}
               width="100%"
               height="100%"
               style={{ border: 0 }}
@@ -205,6 +285,50 @@ export default function Home() {
           </div>
         </div>
       </section>
+      {selectedImageIndex !== null && (
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
+          <button
+            onClick={() => setSelectedImageIndex(null)}
+            className="absolute top-4 right-6 text-white text-5xl z-50"
+          >
+            ×
+          </button>
+
+          <button
+            onClick={() =>
+              setSelectedImageIndex(
+                selectedImageIndex === 0
+                  ? galleryImages.length - 1
+                  : selectedImageIndex - 1,
+              )
+            }
+            className="absolute left-4 md:left-8 text-white text-6xl z-50"
+          >
+            ‹
+          </button>
+
+          <Image
+            src={galleryImages[selectedImageIndex].src}
+            alt={galleryImages[selectedImageIndex].alt}
+            width={1600}
+            height={1200}
+            className="max-h-[90vh] max-w-[90vw] object-contain"
+          />
+
+          <button
+            onClick={() =>
+              setSelectedImageIndex(
+                selectedImageIndex === galleryImages.length - 1
+                  ? 0
+                  : selectedImageIndex + 1,
+              )
+            }
+            className="absolute right-4 md:right-8 text-white text-6xl z-50"
+          >
+            ›
+          </button>
+        </div>
+      )}
     </div>
   );
 }

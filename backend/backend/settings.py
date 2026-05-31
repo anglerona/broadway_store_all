@@ -13,9 +13,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / ".env")
 
 
 # Quick-start development settings - unsuitable for production
@@ -34,7 +36,8 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-default-key')
 ALLOWED_HOSTS = [
     "localhost",
     "broadwaystoreall.ca",
-    "broadway-store-all.onrender.com"
+    "broadway-store-all.onrender.com",
+    "127.0.0.1"
 ]
 
 
@@ -50,6 +53,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'available',
+    'homepage',
 ]
 
 MIDDLEWARE = [

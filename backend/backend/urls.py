@@ -8,5 +8,7 @@ def favicon_redirect(request):
 urlpatterns = [
     path('favicon.ico', favicon_redirect),
     path('admin/', admin.site.urls),
-    path('', include('available.urls')),
+
+    path('api/', include('available.urls')),
+    path('api/', include('homepage.urls')),
 ]
